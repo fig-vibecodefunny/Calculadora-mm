@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E91E4D">
+<title>Calculadora MM</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Calculadora MM">
+<style>
+:root{--p:#E91E4D;--pd:#A8113A;--bg:#fff;--card:#fff;--tx:#1a1a1a;--mu:#6b6166;--bd:#eadde2;--soft:#fdeef3;--ok:#16793a;--okb:#e4f5ea;--wa:#8a5d00;--wab:#fff1cc;--er:#b80f2e;--erb:#fde2e7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17110f;--card:#211a1d;--tx:#f6eef1;--mu:#b9aab0;--bd:#3a2c32;--soft:#33202a;--okb:#13301d;--ok:#6fdc93;--wab:#3a2e0c;--wa:#f2c75a;--erb:#3d1520;--er:#ff8fa3}}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:18px/1.45 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+header{background:var(--p);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:16px}
+header .logo{height:64px;width:auto;flex:none}
+header h1{margin:0;font-size:26px;font-weight:800;letter-spacing:.2px}
+header p{margin:2px 0 0;font-size:15px;opacity:.92}
+nav{display:flex;gap:6px;padding:10px 12px;background:var(--bg);position:sticky;top:env(safe-area-inset-top,0px);z-index:5;border-bottom:3px solid var(--p);flex-wrap:wrap}
+nav button{flex:1 1 110px;font:inherit;font-weight:700;padding:11px 8px;border:2px solid var(--p);background:var(--bg);color:var(--p);border-radius:10px;cursor:pointer}
+nav button.on{background:var(--p);color:#fff}
+main{max-width:980px;margin:0 auto;padding:16px 14px 30px}
+.pane{display:none}.pane.on{display:block}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 10px;font-size:21px;color:var(--p)}
+.card h3{margin:14px 0 6px;font-size:17px}
+label{display:block;font-weight:700;font-size:15px;margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;font-size:20px;padding:12px;border:2px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--p);outline-offset:1px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.seg{display:flex;gap:8px;margin:6px 0 4px}
+.seg button,.btn{flex:1;font:inherit;font-weight:700;font-size:17px;padding:14px;border-radius:10px;border:2px solid var(--p);background:var(--bg);color:var(--p);cursor:pointer}
+.seg button.on{background:var(--p);color:#fff}
+.btn.dark{background:var(--pd);border-color:var(--pd);color:#fff}
+.btn.small{flex:none;padding:10px 14px;font-size:15px}
+.row{display:grid;grid-template-columns:1fr 150px 52px;gap:8px;margin-bottom:8px}
+.row .x{border:2px solid var(--bd);background:var(--bg);color:var(--er);font-size:22px;font-weight:800;border-radius:10px;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:19px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--bd);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-size:14px;color:var(--mu);font-weight:700}
+td.big{font-weight:800;font-size:24px;color:var(--p)}
+tr.tot td{border-top:3px solid var(--p);font-weight:800}
+tr.bad td{background:var(--erb);color:var(--er)}
+small{font-size:.72em;color:var(--mu);font-weight:600}
+.alert{border-radius:12px;padding:12px 14px;margin:12px 0;font-weight:700;border:2px solid}
+.alert.ok{background:var(--okb);color:var(--ok);border-color:var(--ok)}
+.alert.wa{background:var(--wab);color:var(--wa);border-color:var(--wa)}
+.alert.er{background:var(--erb);color:var(--er);border-color:var(--er)}
+.alert div{font-weight:500;margin-top:4px}
+.ficha{display:flex;flex-wrap:wrap;gap:6px 24px;background:var(--soft);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-weight:700}
+.res{background:var(--soft);border-radius:12px;padding:14px;margin-top:12px}
+.res .v{font-size:38px;font-weight:800;color:var(--p);line-height:1.1}
+.stat{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-top:10px}
+.stat div{background:var(--soft);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:26px;color:var(--p)}
+.note{color:var(--mu);font-size:15px;margin:10px 0 0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card.done{border-color:var(--ok)}
+footer{text-align:center;padding:18px;color:var(--mu);font-size:15px;border-top:2px solid var(--bd)}
+footer b{color:var(--p)}
+@media(max-width:560px){.row{grid-template-columns:1fr 110px 48px}table{font-size:16px}td.big{font-size:20px}}
+</style>
+</head>
+<body>
+<header><img class="logo" src="logo.png" alt="Maria Maria"><div><h1>Laboratório da Produção</h1><p>Cálculos de pesagem, sobras e conversões</p></div></header>
+<nav id="nav">
+<button data-t="sep" class="on">Separação</button>
+<button data-t="tintas">Tintas</button>
+<button data-t="tara">Tara</button>
+<button data-t="rec">Receitas</button>
+<button data-t="regra">Regra de 3</button>
+<button data-t="presunto">Presunto</button>
+<button data-t="conv">Conversões</button>
+</nav>
+<main>
+
+<section class="pane" id="tintas">
+<div class="card">
+<h2>1. Receita original da tinta</h2>
+<p class="note" style="margin-top:0">Quantidades em gramas. Também aceita “1,5kg”. Altere os ingredientes conforme a ordem de produção.</p>
+<label>Usar receita salva</label><select id="pick-base"></select>
+<div id="ed-base" style="margin-top:10px"></div>
+<button class="btn small" data-add="base">+ Adicionar ingrediente</button>
+<div class="grid">
+<div><label>Produto</label><input id="prod" placeholder="Ex.: Empadão"></div>
+<div><label>Lote</label><input id="lote" placeholder="Ex.: L2411-03"></div>
+</div>
+</div>
+
+<div class="card">
+<h2>2. Sobra devolvida</h2>
+<label>Peso real da sobra (g)</label>
+<input id="sobra" inputmode="decimal" placeholder="Ex.: 850">
+<div class="seg">
+<button data-m="guardar" class="on">Guardar sobra</button>
+<button data-m="reaproveitar">Reaproveitar em nova receita</button>
+</div>
+<div id="nova-box" style="display:none">
+<h3>Receita nova (que vai receber a sobra)</h3>
+<label>Usar receita salva</label><select id="pick-nova"></select>
+<div id="ed-nova" style="margin-top:10px"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn small" data-add="nova">+ Adicionar ingrediente</button>
+<button class="btn small" id="copia">Copiar da receita original</button>
+</div>
+</div>
+</div>
+
+<div class="card" id="out-t"></div>
+</section>
+
+<section class="pane" id="regra">
+<div class="card">
+<h2>Regra de três</h2>
+<p class="note" style="margin-top:0">Serve para achar um valor novo mantendo a proporção. Exemplo: <b>1000 g de leite</b> pedem <b>30 g de mel</b>. Se eu usar <b>1500 g de leite</b>, quanto de mel preciso? (Resposta: 45 g)</p>
+<div class="seg"><button data-r="d" class="on">Direta (mais dá mais)</button><button data-r="i">Inversa (mais dá menos)</button></div>
+<p class="note" id="rhelp"></p>
+<label>1. Quantidade que eu já conheço</label><input id="ra" inputmode="decimal" placeholder="Ex.: 1000 (leite)">
+<label>2. Quanto isso corresponde (o que a receita pede)</label><input id="rb" inputmode="decimal" placeholder="Ex.: 30 (mel)">
+<label>3. Nova quantidade (do mesmo tipo do passo 1)</label><input id="rc" inputmode="decimal" placeholder="Ex.: 1500 (leite)">
+<div id="out-r"></div>
+</div>
+</section>
+
+<section class="pane" id="presunto">
+<div class="card">
+<h2>Presunto congelado para ralar</h2>
+<div class="seg"><button data-p="c" class="on">Tenho o congelado</button><button data-p="r">Preciso de X ralado</button></div>
+<label id="plabel">Peso do presunto congelado (g)</label>
+<input id="pw" inputmode="decimal">
+<div class="grid">
+<div><label>Ganho de gelo ao congelar (%)</label><input id="pg" inputmode="decimal" value="8"></div>
+<div><label>Perda ao ralar (%)</label><input id="pl" inputmode="decimal" value="4"></div>
+</div>
+<p class="note">Valores de referência médios (ganho de 5 a 10% por gelo e glaceamento; perda de 3 a 6% ao ralar). O presunto cozido tem naturalmente cerca de 70 a 75% de água, mas só o excedente do congelamento é descontado. Ajuste os percentuais com a medição real da fábrica.</p>
+<div id="out-p"></div>
+</div>
+</section>
+
+<section class="pane" id="conv">
+<div class="card">
+<h2>Conversor de unidades</h2>
+<div class="grid">
+<div><label>Valor</label><input id="cv" inputmode="decimal"></div>
+<div><label>Unidade</label><select id="cu"><option value="g">g</option><option value="kg">kg</option><option value="ml">mL</option><option value="l">L</option></select></div>
+<div><label>Densidade (g/mL)</label><select id="cd"><option value="1">Água (1,00)</option><option value="1.03">Leite (1,03)</option><option value="1.03">Gema (1,03)</option><option value="1.42">Mel (1,42)</option><option value="0.92">Óleo (0,92)</option><option value="x">Outra...</option></select></div>
+</div>
+<input id="cx" inputmode="decimal" placeholder="Densidade personalizada" style="display:none;margin-top:8px">
+<div id="out-c"></div>
+<p class="note">Densidades aproximadas. Só afetam a conversão entre massa (g, kg) e volume (mL, L).</p>
+</div>
+<div class="card">
+<h2>Fator de multiplicação da receita</h2>
+<div class="grid">
+<div><label>Quantidade da receita base</label><input id="fb" inputmode="decimal"></div>
+<div><label>Quantidade pedida na ordem</label><input id="fp" inputmode="decimal"></div>
+<div><label>Ingrediente na receita base</label><input id="fi" inputmode="decimal"></div>
+</div>
+<div id="out-f"></div>
+</div>
+</section>
+
+<section class="pane on" id="sep">
+<div class="card">
+<h2>Separação da ordem de produção</h2>
+<div class="grid">
+<div><label>Produto</label><input id="sprod" placeholder="Ex.: Empadão"></div>
+<div><label>Nº da ordem</label><input id="sord"></div>
+<div><label>Fator da ordem (vezes a receita)</label><input id="sfat" inputmode="decimal" value="1"></div>
+</div>
+<label>Carregar ingredientes de uma receita salva</label><select id="pick-sep"></select>
+<p class="note">Para cada ingrediente, anote o lote e o peso. Se vierem dois lotes, use os dois campos. O app soma e confere com o pedido.</p>
+</div>
+<div id="sep-list"></div>
+<div class="card">
+<div id="sprog" style="font-size:20px;margin-bottom:10px"></div>
+<button class="btn small" data-sadd="1">+ Adicionar ingrediente</button>
+<button class="btn small" id="slimpa">Limpar ordem</button>
+</div>
+</section>
+
+<section class="pane" id="tara">
+<div class="card">
+<h2>Valores de tara</h2>
+<label>Pesquisar</label><input id="tq" placeholder="Digite o nome (ex.: bandeja)">
+<div id="tlist" style="margin-top:12px"></div>
+</div>
+<div class="card" id="tcad">
+<h2>Cadastrar ou atualizar tara</h2>
+<div class="grid">
+<div><label>Nome do recipiente</label><input id="tn" placeholder="Ex.: Bandeja grande"></div>
+<div><label>Peso da tara (g)</label><input id="tv" inputmode="decimal"></div>
+</div>
+<button class="btn dark" id="tsalvar" style="width:100%;margin-top:12px">Salvar tara</button>
+<div id="tmsg"></div>
+</div>
+<div class="card">
+<h2>Calcular peso líquido</h2>
+<div class="grid">
+<div><label>Peso bruto (g)</label><input id="tb" inputmode="decimal"></div>
+<div><label>Tara da lista</label><select id="tsel"></select></div>
+<div><label>Tara (g)</label><input id="tx" inputmode="decimal"></div>
+</div>
+<div id="tout"></div>
+</div>
+</section>
+
+<section class="pane" id="rec">
+<div class="card">
+<h2>Cadastrar receita</h2>
+<label>Nome da receita</label><input id="rnome" placeholder="Ex.: Tinta do empadão">
+<h3>Ingredientes (em gramas)</h3>
+<div id="ed-cur"></div>
+<button class="btn small" data-add="cur">+ Adicionar ingrediente</button>
+<label>Fator da ordem (ex.: 3,5 para 3,5 vezes a receita)</label><input id="rfat" inputmode="decimal" value="1">
+<div id="out-rec"></div>
+<button class="btn dark" id="rsalvar" style="width:100%;margin-top:14px">Salvar receita</button>
+<div id="rmsg"></div>
+</div>
+<div class="card"><h2>Receitas salvas</h2><div id="rlist"></div>
+<p class="note">Para usar uma receita, escolha “Usar receita salva” nas abas Separação e Tintas.</p></div>
+<div class="card"><h2>Backup (receitas e taras)</h2>
+<p class="note" style="margin-top:0">As receitas ficam guardadas só neste tablet. Se limpar os dados do Chrome, elas somem. Toque em “Gerar backup”, guarde o texto (por exemplo, enviando para você mesmo). Para recuperar, cole o texto aqui e toque em “Restaurar backup”.</p>
+<div class="seg"><button class="btn" id="bkgerar">Gerar backup</button><button class="btn" id="bkrest">Restaurar backup</button></div>
+<textarea id="bktxt" rows="5" placeholder="Texto do backup"></textarea>
+</div>
+</section>
+</main>
+<footer>Desenvolvido por <b>Jonatas Figueiredo</b></footer>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const nf=(n,d=1)=>n.toLocaleString('pt-BR',{maximumFractionDigits:d});
+const G=n=>nf(n)+' g'+(Math.abs(n)>=1000?' <small>('+nf(n/1000,3)+' kg)</small>':'');
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+function P(v){v=String(v==null?'':v).trim().toLowerCase().replace(/\s/g,'').replace(',','.');const m=v.match(/^(-?\d*\.?\d+)(kg|g|ml|l)?$/);if(!m)return 0;let n=parseFloat(m[1]);if(m[2]==='kg'||m[2]==='l')n*=1000;return n}
+let st={base:[{n:'Gema pasteurizada',q:'1500'},{n:'Leite líquido',q:'1000'},{n:'Mel',q:'30'}],nova:[{n:'Gema pasteurizada',q:'1500'},{n:'Leite líquido',q:'1000'},{n:'Mel',q:'30'}]};
+try{const s=JSON.parse(localStorage.getItem('labprod')||'null');if(s&&s.base&&s.nova)st=s}catch(e){}
+let mode='guardar',rmode='d',pmode='c';
+function save(){try{localStorage.setItem('labprod',JSON.stringify(st))}catch(e){}}
+function ed(k){$('#ed-'+k).innerHTML=st[k].map((r,i)=>'<div class="row"><input data-l="'+k+'" data-i="'+i+'" data-f="n" value="'+esc(r.n)+'" placeholder="Ingrediente"><input data-l="'+k+'" data-i="'+i+'" data-f="q" inputmode="decimal" value="'+esc(r.q)+'" placeholder="g"><button class="x" data-rm="'+k+'" data-i="'+i+'" aria-label="Remover">✕</button></div>').join('')}
+function al(c,t,x){return '<div class="alert '+c+'">'+t+(x?'<div>'+x+'</div>':'')+'</div>'}
+function tintas(){
+ const base=st.base.map(r=>({n:r.n.trim()||'Ingrediente',q:P(r.q)})),T=base.reduce((a,r)=>a+r.q,0),S=P($('#sobra').value);
+ const fi='<div class="ficha"><span>Produto: '+esc($('#prod').value||'-')+'</span><span>Lote: '+esc($('#lote').value||'-')+'</span></div>';
+ let h='';
+ if(!T||!S){$('#out-t').innerHTML='<h2>Resultado</h2><p class="note" style="margin-top:0">Preencha a receita original e o peso real da sobra.</p>';return}
+ const parte=base.map(r=>({n:r.n,q:r.q,s:S*r.q/T}));
+ if(mode==='guardar'){
+  h='<h2>Sobra para guardar</h2>'+fi;
+  if(S>T)h+=al('er','⚠ A sobra ('+nf(S)+' g) é maior que a receita original ('+nf(T)+' g).','Confira o peso informado.');
+  h+='<table><tr><th>Ingrediente</th><th>Receita</th><th>Na sobra (abater na folha)</th><th>Usado</th></tr>'+parte.map(r=>'<tr><td>'+esc(r.n)+'</td><td>'+nf(r.q)+' g</td><td class="big">'+G(r.s)+'</td><td>'+nf(r.q-r.s)+' g</td></tr>').join('')+'<tr class="tot"><td>Total</td><td>'+nf(T)+' g</td><td>'+G(S)+'</td><td>'+nf(T-S)+' g</td></tr></table>';
+  h+='<p class="note"><b>Na sobra (abater na folha)</b>: quanto de cada ingrediente voltou. <b>Usado</b>: quanto a produção consumiu. A conta assume mistura uniforme. A sobra equivale a '+nf(S/T*100)+'% da receita.</p>';
+ }else{
+  const nv=st.nova.map(r=>({n:r.n.trim()||'Ingrediente',q:P(r.q)})),N=nv.reduce((a,r)=>a+r.q,0);
+  h='<h2>Reaproveitar sobra</h2>'+fi+'<p class="note" style="margin-top:0"><b>Já na sobra</b>: o que a sobra contém. <b>Receita nova</b>: o que a ordem pede. <b>Pesar agora</b>: o que ainda falta pesar.</p>';
+  if(!N){$('#out-t').innerHTML=h+'<p class="note">Preencha a receita nova.</p>';return}
+  const key=s=>s.trim().toLowerCase(),names=[];
+  [...nv,...parte].forEach(r=>{if(!names.some(x=>key(x)===key(r.n)))names.push(r.n)});
+  let dev=0,over=[],miss=[];
+  const rows=names.map(nm=>{const a=nv.find(r=>key(r.n)===key(nm)),b=parte.find(r=>key(r.n)===key(nm)),need=a?a.q:0,have=b?b.s:0,falta=need-have;
+   dev=Math.max(dev,Math.abs((a?a.q/N:0)-(b?b.q/T:0))*100);
+   if(!a&&have>0.5)miss.push(nm);else if(falta<-0.5)over.push(nm+' (excede '+nf(-falta)+' g)');
+   return{nm,have,need,falta}});
+  if(miss.length||over.length){
+   h+=al('er','✕ Não use esta sobra nesta receita. Guarde a sobra.',(miss.length?'Ingrediente na sobra que não existe na receita nova: '+esc(miss.join(', '))+'. ':'')+(over.length?'Já passa do limite: '+esc(over.join(', '))+'.':''));
+  }else if(dev>1){
+   h+=al('wa','⚠ Proporção diferente ('+nf(dev)+' pontos percentuais no maior desvio).','A sobra vem de outra proporção. Confira antes de misturar; o ideal é reaproveitar em receita de mesma proporção.');
+  }else h+=al('ok','✓ Proporção compatível (desvio máximo de '+nf(dev)+' ponto percentual).');
+  h+='<table><tr><th>Ingrediente</th><th>Já na sobra</th><th>Receita nova</th><th>Pesar agora</th></tr>'+rows.map(r=>'<tr class="'+(r.falta<-0.5?'bad':'')+'"><td>'+esc(r.nm)+'</td><td>'+nf(r.have)+' g</td><td>'+nf(r.need)+' g</td><td class="big">'+(r.falta<-0.5?'✕ excede':G(Math.max(r.falta,0)))+'</td></tr>').join('')+'<tr class="tot"><td>Total</td><td>'+nf(S)+' g</td><td>'+nf(N)+' g</td><td>'+G(Math.max(N-S,0))+'</td></tr></table>';
+  if(S>N)h+=al('er','✕ A sobra ('+nf(S)+' g) é maior que a receita nova ('+nf(N)+' g).');
+ }
+ $('#out-t').innerHTML=h;
+}
+function regra(){
+ const a=P($('#ra').value),b=P($('#rb').value),c=P($('#rc').value);let h='';
+ $('#rhelp').textContent=rmode==='d'?'Use quando, ao dobrar uma quantidade, a outra também dobra. Ex.: dobrou o leite, dobra o mel.':'Use quando, ao dobrar uma quantidade, a outra cai pela metade. Ex.: com o dobro de pessoas, o serviço leva metade do tempo.';
+ if(a&&b&&c){const x=rmode==='d'?b*c/a:a*b/c;
+  h='<div class="res"><div class="note" style="margin:0 0 6px">Se <b>'+nf(a,4)+'</b> corresponde a <b>'+nf(b,4)+'</b>, então <b>'+nf(c,4)+'</b> corresponde a:</div><div class="v">'+nf(x,3)+'</div></div>'}
+ else h='<p class="note">Preencha os três campos acima (use vírgula se precisar).</p>';
+ $('#out-r').innerHTML=h;
+}
+function presunto(){
+ const w=P($('#pw').value),g=P($('#pg').value)/100,l=P($('#pl').value)/100;let h='';
+ if(w){let cong,real,ralado;
+  if(pmode==='c'){cong=w;real=w/(1+g);ralado=real*(1-l)}else{ralado=w;real=w/(1-l);cong=real*(1+g)}
+  h='<div class="stat"><div>Presunto congelado (estoque)<b>'+G(cong)+'</b></div><div>Gelo/água a descontar<b>'+G(cong-real)+'</b></div><div>Presunto real (descongelado)<b>'+G(real)+'</b></div><div>Estimado depois de ralado<b>'+G(ralado)+'</b></div></div>';
+  if(pmode==='r')h='<div class="res"><div class="note" style="margin:0">Para obter '+G(w)+' de presunto ralado, pese:</div><div class="v">'+G(cong)+'</div></div>'+h;
+  else h='<div class="res"><div class="note" style="margin:0">Peso útil de presunto nesse bloco:</div><div class="v">'+G(real)+'</div></div>'+h;
+ }
+ $('#out-p').innerHTML=h;
+}
+function conv(){
+ $('#cx').style.display=$('#cd').value==='x'?'block':'none';
+ const v=P($('#cv').value),u=$('#cu').value,d=$('#cd').value==='x'?P($('#cx').value):parseFloat($('#cd').value);let h='';
+ if(v&&d>0){const g=u==='g'?v:u==='kg'?v*1000:u==='ml'?v*d:v*1000*d;
+  h='<div class="stat"><div>Gramas<b>'+nf(g,2)+' g</b></div><div>Quilos<b>'+nf(g/1000,4)+' kg</b></div><div>Mililitros<b>'+nf(g/d,2)+' mL</b></div><div>Litros<b>'+nf(g/d/1000,4)+' L</b></div></div>'}
+ $('#out-c').innerHTML=h;
+ const b=P($('#fb').value),p=P($('#fp').value),i=P($('#fi').value);let f='';
+ if(b&&p){const k=p/b;f='<div class="res"><div class="note" style="margin:0">Fator da ordem</div><div class="v">'+nf(k,4)+'x</div>'+(i?'<div class="note" style="color:var(--tx)">Ingrediente de '+nf(i)+' vira <b>'+G(i*k)+'</b></div>':'')+'</div>'}
+ $('#out-f').innerHTML=f;
+}
+function all(){tintas();regra();presunto();conv();recfat();sepCalc();tcalc();save()}
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.l)st[t.dataset.l][t.dataset.i][t.dataset.f]=t.value;all()});
+document.addEventListener('click',e=>{
+ const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.t){$$('nav button').forEach(b=>b.classList.toggle('on',b===t));$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t.dataset.t));window.scrollTo(0,0)}
+ if(t.dataset.rm){st[t.dataset.rm].splice(t.dataset.i,1);ed(t.dataset.rm)}
+ if(t.dataset.add){st[t.dataset.add].push({n:'',q:''});ed(t.dataset.add)}
+ if(t.id==='copia'){st.nova=st.base.map(r=>({...r}));ed('nova')}
+ if(t.dataset.m){mode=t.dataset.m;$$('[data-m]').forEach(b=>b.classList.toggle('on',b===t));$('#nova-box').style.display=mode==='reaproveitar'?'block':'none'}
+ if(t.dataset.r){rmode=t.dataset.r;$$('[data-r]').forEach(b=>b.classList.toggle('on',b===t))}
+ if(t.dataset.p){pmode=t.dataset.p;$$('[data-p]').forEach(b=>b.classList.toggle('on',b===t));$('#plabel').textContent=pmode==='c'?'Peso do presunto congelado (g)':'Peso de presunto ralado desejado (g)'}
+ all();
+});
+st.cur=st.cur||[{n:'',q:''}];st.rec=st.rec||[];
+function picks(){const o='<option value="">Escolher receita salva...</option>'+st.rec.map((r,i)=>'<option value="'+i+'">'+esc(r.nome)+'</option>').join('');$('#pick-base').innerHTML=o;$('#pick-nova').innerHTML=o;$('#pick-sep').innerHTML=o}
+function rlist(){$('#rlist').innerHTML=st.rec.length?st.rec.map((r,i)=>'<div class="ficha" style="justify-content:space-between;align-items:center"><span>'+esc(r.nome)+' <small>('+nf(r.ing.reduce((a,x)=>a+P(x.q),0))+' g)</small></span><span><button class="btn small" data-rload="'+i+'">Editar</button> <button class="btn small" data-rdel="'+i+'">Excluir</button></span></div>').join(''):'<p class="note" style="margin-top:0">Nenhuma receita salva ainda.</p>'}
+function recfat(){const f=P($('#rfat').value)||1,L=st.cur.map(r=>({n:r.n.trim(),q:P(r.q)})).filter(r=>r.n||r.q);let h='';
+ if(L.length){const T=L.reduce((a,r)=>a+r.q,0);h='<h3>Quantidades para a ordem (fator '+nf(f,4)+'x)</h3><table><tr><th>Ingrediente</th><th>Receita base</th><th>Pesar</th></tr>'+L.map(r=>'<tr><td>'+esc(r.n||'Ingrediente')+'</td><td>'+nf(r.q)+' g</td><td class="big">'+G(r.q*f)+'</td></tr>').join('')+'<tr class="tot"><td>Total</td><td>'+nf(T)+' g</td><td>'+G(T*f)+'</td></tr></table>'}
+ $('#out-rec').innerHTML=h}
+document.addEventListener('input',e=>{const t=e.target;if((t.id==='pick-base'||t.id==='pick-nova')&&t.value!==''){const k=t.id==='pick-base'?'base':'nova';st[k]=st.rec[t.value].ing.map(x=>({...x}));ed(k);t.value='';all()}});
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+ if(t.id==='rsalvar'){const nome=$('#rnome').value.trim(),ing=st.cur.filter(r=>r.n.trim()&&P(r.q)>0).map(r=>({n:r.n.trim(),q:String(P(r.q))}));
+  if(!nome||!ing.length){$('#rmsg').innerHTML=al('er','✕ Digite o nome e pelo menos um ingrediente com quantidade.');return}
+  const i=st.rec.findIndex(r=>r.nome.toLowerCase()===nome.toLowerCase());
+  if(i>=0)st.rec[i]={nome,ing};else st.rec.push({nome,ing});
+  $('#rmsg').innerHTML=al('ok','✓ Receita “'+esc(nome)+'” salva.');picks();rlist();save()}
+ if(t.dataset.rload!==undefined){const r=st.rec[t.dataset.rload];$('#rnome').value=r.nome;st.cur=r.ing.map(x=>({...x}));ed('cur');all();window.scrollTo(0,0)}
+ if(t.dataset.rdel!==undefined){if(t.dataset.sure){st.rec.splice(t.dataset.rdel,1);picks();rlist();save()}else{t.dataset.sure=1;t.textContent='Confirmar'}}
+ if(t.id==='bkgerar')$('#bktxt').value=JSON.stringify({rec:st.rec,tara:st.tara});
+ if(t.id==='bkrest'){try{let a=JSON.parse($('#bktxt').value);if(Array.isArray(a))a={rec:a,tara:st.tara};if(!a||!Array.isArray(a.rec))throw 0;st.rec=a.rec.filter(r=>r&&r.nome&&Array.isArray(r.ing));st.tara=(Array.isArray(a.tara)?a.tara:[]).filter(r=>r&&r.n);picks();rlist();tpicks();tlist();save();$('#rmsg').innerHTML=al('ok','✓ Backup restaurado: '+st.rec.length+' receita(s) e '+st.tara.length+' tara(s).')}catch(x){$('#rmsg').innerHTML=al('er','✕ Texto de backup inválido.')}}
+});
+const blk=()=>({n:'',q:'',la:'',pa:'',lb:'',pb:'',ok:false});
+st.sep=st.sep||{prod:'',ord:'',fat:'1',ing:[blk()]};st.tara=st.tara||[];
+const nz=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function sepFill(){$('#sprod').value=st.sep.prod;$('#sord').value=st.sep.ord;$('#sfat').value=st.sep.fat}
+function sepRender(){$('#sep-list').innerHTML=st.sep.ing.map((r,i)=>{const a=(f,ph,ex)=>'<input data-si="'+i+'" data-sf="'+f+'" value="'+esc(r[f])+'" placeholder="'+ph+'"'+(ex||'')+'>';
+ return '<div class="card"><div class="row">'+a('n','Ingrediente')+a('q','Qtd. receita (g)',' inputmode="decimal"')+'<button class="x" data-sdel="'+i+'" aria-label="Remover">✕</button></div><div id="sp-'+i+'" class="note" style="margin:0 0 8px"></div><div class="g2">'+a('la','Lote 1')+a('pa','Peso lote 1 (g)',' inputmode="decimal"')+a('lb','Lote 2 (se houver)')+a('pb','Peso lote 2 (g)',' inputmode="decimal"')+'</div><div id="ss-'+i+'"></div><button class="btn small" style="margin-top:8px" data-sdone="'+i+'" id="sd-'+i+'"></button></div>'}).join('')}
+function sepCalc(){const f=P(st.sep.fat)||1;let d=0;
+ st.sep.ing.forEach((r,i)=>{const ped=P(r.q)*f,a=P(r.pa),b=P(r.pb),t=a+b;let h='';
+  $('#sp-'+i).innerHTML=ped?'Pedido: <b>'+G(ped)+'</b> <small>('+nf(P(r.q))+' g × '+nf(f,4)+')</small>':'Informe a quantidade da receita.';
+  if(ped&&t>0){const df=t-ped;
+   if(Math.abs(df)<=0.5)h=al('ok','✓ Bateu: '+G(t)+' separados');
+   else if(df<0)h=al('wa','⚠ Faltam '+G(-df),'Separado até agora: '+G(t)+(a&&b?' (lote 1: '+nf(a)+' g, lote 2: '+nf(b)+' g)':''));
+   else h=al('er','✕ Passou '+G(df),'Separado: '+G(t)+' para um pedido de '+nf(ped)+' g.')}
+  if((a>0&&!r.la.trim())||(b>0&&!r.lb.trim()))h+=al('wa','⚠ Falta anotar o lote.');
+  $('#ss-'+i).innerHTML=h;
+  const bt=$('#sd-'+i);bt.textContent=r.ok?'✓ Separado (toque para desmarcar)':'Marcar como separado';bt.classList.toggle('dark',!!r.ok);bt.closest('.card').classList.toggle('done',!!r.ok);if(r.ok)d++});
+ $('#sprog').innerHTML=st.sep.ing.length?'<b>'+d+' de '+st.sep.ing.length+'</b> ingredientes separados':''}
+function tpicks(){$('#tsel').innerHTML='<option value="">Escolher da lista...</option>'+st.tara.map((r,i)=>'<option value="'+i+'">'+esc(r.n)+' ('+nf(P(r.v))+' g)</option>').join('')}
+function tlist(){const q=nz($('#tq').value.trim());const L=st.tara.map((r,i)=>({n:r.n,v:r.v,i})).filter(r=>nz(r.n).includes(q)).sort((a,b)=>a.n.localeCompare(b.n,'pt-BR'));
+ $('#tlist').innerHTML=L.length?L.map(r=>'<div class="ficha" style="justify-content:space-between;align-items:center"><span>'+esc(r.n)+'</span><span style="font-size:26px;color:var(--p)">'+G(P(r.v))+'</span><span><button class="btn small" data-tload="'+r.i+'">Editar</button> <button class="btn small" data-tdel="'+r.i+'">Excluir</button></span></div>').join(''):'<p class="note" style="margin-top:0">'+(st.tara.length?'Nada encontrado para essa pesquisa.':'Nenhuma tara cadastrada ainda. Cadastre abaixo.')+'</p>'}
+function tcalc(){const b=P($('#tb').value),t=P($('#tx').value);let h='';
+ if(b&&$('#tx').value!==''){const n=b-t;h=n<0?al('er','✕ A tara é maior que o peso bruto.'):'<div class="res"><div class="note" style="margin:0">Peso líquido (bruto menos tara)</div><div class="v">'+G(n)+'</div></div>'}
+ $('#tout').innerHTML=h}
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.si!==undefined){st.sep.ing[t.dataset.si][t.dataset.sf]=t.value;all()}
+ const m={sprod:'prod',sord:'ord',sfat:'fat'}[t.id];if(m){st.sep[m]=t.value;all()}
+ if(t.id==='pick-sep'&&t.value!==''){const r=st.rec[t.value];st.sep.ing=r.ing.map(x=>({...blk(),n:x.n,q:x.q}));if(!$('#sprod').value){st.sep.prod=r.nome;$('#sprod').value=r.nome}t.value='';sepRender();all()}
+ if(t.id==='tq')tlist();
+ if(t.id==='tsel'&&t.value!==''){$('#tx').value=st.tara[t.value].v;all()}});
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.sadd){st.sep.ing.push(blk());sepRender();all()}
+ if(t.dataset.sdel!==undefined){st.sep.ing.splice(t.dataset.sdel,1);sepRender();all()}
+ if(t.dataset.sdone!==undefined){const r=st.sep.ing[t.dataset.sdone];r.ok=!r.ok;all()}
+ if(t.id==='slimpa'){if(t.dataset.sure){st.sep={prod:'',ord:'',fat:'1',ing:[blk()]};t.dataset.sure='';t.textContent='Limpar ordem';sepFill();sepRender();all()}else{t.dataset.sure=1;t.textContent='Confirmar limpeza'}}
+ if(t.id==='tsalvar'){const n=$('#tn').value.trim(),v=P($('#tv').value);
+  if(!n||v<=0){$('#tmsg').innerHTML=al('er','✕ Digite o nome e o peso da tara.');return}
+  const i=st.tara.findIndex(r=>r.n.toLowerCase()===n.toLowerCase());
+  if(i>=0)st.tara[i]={n,v:String(v)};else st.tara.push({n,v:String(v)});
+  $('#tmsg').innerHTML=al('ok','✓ Tara “'+esc(n)+'” salva.');tpicks();tlist();save()}
+ if(t.dataset.tload!==undefined){const r=st.tara[t.dataset.tload];$('#tn').value=r.n;$('#tv').value=r.v;$('#tcad').scrollIntoView()}
+ if(t.dataset.tdel!==undefined){if(t.dataset.sure){st.tara.splice(t.dataset.tdel,1);tpicks();tlist();save()}else{t.dataset.sure=1;t.textContent='Confirmar'}}
+});
+ed('base');ed('nova');ed('cur');picks();rlist();sepFill();sepRender();tpicks();tlist();all();
+</script>
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
+</script>
+</body>
+</html>

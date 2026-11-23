@@ -1,4 +1,4 @@
-const CACHE = 'calculadora-mm-v1';
+const CACHE = 'calculadora-mm-v4';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './logo.png'];
 
 self.addEventListener('install', e => {
